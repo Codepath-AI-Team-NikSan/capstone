@@ -17,8 +17,8 @@ Follow these steps to set up the project on your local machine:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/consumer-research-ai-chat.git
-   cd consumer-research-ai-chat
+   git clone https://github.com/Codepath-AI-Team-NikSan/capstone.git
+   cd capstone
    ```
 
 2. Create a virtual environment:
