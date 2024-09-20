@@ -1,9 +1,11 @@
 import chainlit as cl
 import openai
 import os
-from pydantic import BaseModel
 from langsmith.wrappers import wrap_openai
 from langsmith import traceable
+from prompts import INITIAL_SYSTEM_PROMPT
+from pydantic import BaseModel
+
 
 API_KEY = os.getenv("OPENAI_API_KEY")
 ENDPOINT_URL = os.getenv("OPENAI_ENDPOINT")
@@ -26,7 +28,7 @@ async def handle_message(message):
         messages=[
             {
                 "role": "system",
-                "content": "Determine if the user is asking for a product recommendation. Respond with a JSON object containing 'is_recommendation_query' (boolean) and 'product_type' (string).",
+                "content": INITIAL_SYSTEM_PROMPT,
             },
             {"role": "user", "content": query},
         ],
