@@ -53,7 +53,7 @@ After setting up the project, users can interact with the AI chat interface to a
 - [ ] Create the app scaffold
   - [x] ~~Basic Python project with a .env (@nikrad)~~
   - [x] ~~Tracing with LangSmith or Langfuse (@nikrad)~~
-  - [x] ~~Chainlit wired to OpenAI with chat history (@nikrd) ~~
+  - [x] ~~Chainlit wired to OpenAI with chat history (@nikrad)~~
 - [ ] Design the main prompt(s)
 - [ ] Create an evaluation dataset (10 examples)
 - [ ] (stretch) Set up LlamaIndex loaders (e.g., email, Slack, wherever your data is coming from)
