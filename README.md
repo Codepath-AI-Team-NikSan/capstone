@@ -43,6 +43,13 @@ Follow these steps to set up the project on your local machine:
    # Add any other variables specified in .env.sample
    ```
 
+5. Run the application:
+   ```
+   chainlit run app.py -w
+   ```
+   The app will be accessible at `http://localhost:8000`
+
+
 ## Usage
 
 After setting up the project, users can interact with the AI chat interface to ask questions about products, request recommendations, or seek consumer advice. The AI will analyze web content and provide relevant information and suggestions based on the user's queries.
