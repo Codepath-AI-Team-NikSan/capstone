@@ -50,7 +50,7 @@ After setting up the project, users can interact with the AI chat interface to a
 
 ## Week 2 Capstone Milestones
 - [x] ~~Create a public GitHub repo with a README.md that describes the project (@nikrad)~~
-- [ ] Create the app scaffold
+- [x] Create the app scaffold (@nikrad)
   - [x] ~~Basic Python project with a .env (@nikrad)~~
   - [x] ~~Tracing with LangSmith or Langfuse (@nikrad)~~
   - [x] ~~Chainlit wired to OpenAI with chat history (@nikrad)~~
