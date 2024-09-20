@@ -46,3 +46,16 @@ Follow these steps to set up the project on your local machine:
 ## Usage
 
 After setting up the project, users can interact with the AI chat interface to ask questions about products, request recommendations, or seek consumer advice. The AI will analyze web content and provide relevant information and suggestions based on the user's queries.
+
+
+## Week 2 Capstone Milestones
+- [x] ~~Create a public GitHub repo with a README.md that describes the project (@nikrad)~~
+- [ ] Create the app scaffold
+  - [x] ~~Basic Python project with a .env (@nikrad)~~
+  - [x] ~~Tracing with LangSmith or Langfuse (@nikrad)~~
+  - [x] ~~Chainlit wired to OpenAI with chat history (@nikrd) ~~
+- [ ] Design the main prompt(s)
+- [ ] Create an evaluation dataset (10 examples)
+- [ ] (stretch) Set up LlamaIndex loaders (e.g., email, Slack, wherever your data is coming from)
+- [ ] (stretch) Set up your RAG pipeline
+- [ ] (stretch) Run an LLM-as-a-judge evaluation test
