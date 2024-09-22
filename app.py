@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from search_handler import search, Provider
 from llama_index.readers.web import BeautifulSoupWebReader
 from llama_index.core import VectorStoreIndex
+from CustomWebReader import CustomWebReader
 
 API_KEY = os.getenv("OPENAI_API_KEY")
 ENDPOINT_URL = os.getenv("OPENAI_ENDPOINT")
@@ -48,7 +49,7 @@ async def handle_message(message):
     print(f"is_recommendation_query: {recommendation_response.is_recommendation_query}")
     print(f"product_type: {recommendation_response.product_type}")
 
-    response_msg = None
+    response_msg = cl.Message(content="")
     if recommendation_response.is_recommendation_query:
         if not recommendation_response.max_price:
             msg = "What price range or maximum price do you have mind?"
@@ -91,7 +92,8 @@ def search_and_process(search_string, recommendation_response):
 
     # Load search result pages
     try:
-        documents = BeautifulSoupWebReader().load_data(urls=results)
+        # documents = BeautifulSoupWebReader().load_data(urls=results)  #BSReader intermittently getting stuck
+        documents = CustomWebReader().load_data(urls=results)
     except Exception as e:
         print(f"Error loading data from URLs: {e}")
         documents = []
