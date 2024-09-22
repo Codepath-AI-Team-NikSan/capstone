@@ -55,16 +55,20 @@ def extract_page_content(url):
         return ""
 
 
-def search(search_query, provider=Provider.DuckDuckGo, max_results=20):
+def search(search_query, provider=Provider.DuckDuckGo, fetch_docs=False, max_results=20):
     results = None
     if provider==Provider.DuckDuckGo:
         results = DDGS().text(search_query, max_results=max_results)
     else:
         results = google_search(search_query)
 
-    all_content = []
-    for result in results:
-        print(f"Fetching content from: {result['href']}")
-        page_content = extract_page_content(result['href'])
-        all_content.append(page_content)
-    return set(all_content)
+    if fetch_docs:
+        all_content = []
+        for result in results:
+            print(f"Fetching content from: {result['href']}")
+            page_content = extract_page_content(result['href'])
+            all_content.append(page_content)
+        return set(all_content)
+    else:
+        return [result['href'] for result in results]
+
