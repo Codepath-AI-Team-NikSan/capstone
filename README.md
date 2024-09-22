@@ -61,8 +61,8 @@ After setting up the project, users can interact with the AI chat interface to a
   - [x] ~~Basic Python project with a .env (@nikrad)~~
   - [x] ~~Tracing with LangSmith or Langfuse (@nikrad)~~
   - [x] ~~Chainlit wired to OpenAI with chat history (@nikrad)~~
-- [ ] Design the main prompt(s)
-- [ ] Create an evaluation dataset (10 examples)
-- [ ] (stretch) Set up LlamaIndex loaders (e.g., email, Slack, wherever your data is coming from)
-- [ ] (stretch) Set up your RAG pipeline
-- [ ] (stretch) Run an LLM-as-a-judge evaluation test
+- [x] ~~Design the main prompt(s) (@sanal @nikrad)~~
+- [x] ~~Create an evaluation dataset (10 examples) (@nikrad)~~
+- [x] ~~(stretch) Set up LlamaIndex loaders (e.g., email, Slack, wherever your data is coming from) (@sanal)~~
+- [x] ~~(stretch) Set up your RAG pipeline (@sanal)~~
+- [x] ~~(stretch) Run an LLM-as-a-judge evaluation test (@nikrad)~~
