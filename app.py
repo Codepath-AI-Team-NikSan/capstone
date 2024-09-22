@@ -51,8 +51,12 @@ async def handle_message(message):
 
     response_msg = cl.Message(content="")
     if recommendation_response.is_recommendation_query:
-        if not recommendation_response.max_price:
-            msg = "What price range or maximum price do you have mind?"
+        if not recommendation_response.product_type:
+            msg = "What type of product are you looking for?"
+            response_msg = cl.Message(content=msg)
+            await response_msg.send()
+        elif not recommendation_response.max_price:
+            msg = f"What price range or maximum price do you have mind for the {recommendation_response.product_type}?"
             response_msg = cl.Message(content=msg)
             await response_msg.send()
         elif len(recommendation_response.features) == 0:
@@ -70,7 +74,14 @@ async def handle_message(message):
             response_msg.content = f"Searching for `{search_string}`..."
             await response_msg.update()
 
-            search_result = search_and_process(search_string, recommendation_response)
+            search_prompt = SEARCH_RESULT_PROMPT.format(
+                recommendation_response.product_type,
+                recommendation_response.max_price,
+                recommendation_response.features,
+            )
+            print(f"search_prompt: {search_prompt}")
+            search_result = search_and_process(search_string, search_prompt)
+            print(f"search_result: {search_result}")
 
             response_msg.content = str(search_result)
             await response_msg.update()
@@ -84,7 +95,7 @@ async def handle_message(message):
 
 
 @traceable
-def search_and_process(search_string, recommendation_response):
+def search_and_process(search_string, search_prompt):
     results = search(
         search_query=search_string, provider=Provider.DuckDuckGo, max_results=10
     )  # provider=Provider.Google
@@ -105,18 +116,7 @@ def search_and_process(search_string, recommendation_response):
 
     # Create a query engine
     query_engine = index.as_query_engine()
-
-    # Search results prompt
-
-    search_prompt = SEARCH_RESULT_PROMPT.format(
-        recommendation_response.product_type,
-        recommendation_response.max_price,
-        recommendation_response.features,
-    )
-    print(f"search_prompt: {search_prompt}")
-    search_result = query_engine.query(search_prompt)
-    print(f"search_result: {search_result}")
-    return search_result
+    return query_engine.query(search_prompt)
 
 
 if __name__ == "__main__":

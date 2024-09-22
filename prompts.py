@@ -11,5 +11,5 @@ Respond with a JSON object containing:
 SEARCH_RESULT_PROMPT = """
 What are the top three {} with a price range of {} that have features {}?
 
-List the top three recommendations with a numbered list. Under each recommendation, write a single sentence with a maximum of 250 characters explaining why you chose it.
+List the top three recommendations with a numbered list. Under each recommendation, write a single sentence with a maximum of 250 characters explaining why you chose it. Make sure you include the price of each item.
 """
