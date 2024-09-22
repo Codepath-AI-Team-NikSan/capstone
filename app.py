@@ -3,7 +3,7 @@ import openai
 import os
 from langsmith.wrappers import wrap_openai
 from langsmith import traceable
-from prompts import INITIAL_SYSTEM_PROMPT
+from prompts import INITIAL_SYSTEM_PROMPT, SEARCH_RESULT_PROMPT
 from pydantic import BaseModel
 from search_handler import search, Provider
 from llama_index.readers.web import BeautifulSoupWebReader
@@ -29,9 +29,13 @@ async def handle_message(message):
     # Maintain an array of messages in the user session
     message_history = cl.user_session.get("message_history", [])
     query = message.content
+
+    # If the message history is empty, add the initial system prompt
     if not len(message_history) or message_history[0].get("role") != "system":
         message_history.append({"role": "system", "content": INITIAL_SYSTEM_PROMPT})
+    # Add the user's message to the message history
     message_history.append({"role": "user", "content": query})
+    # Send the message history to the OpenAI API
     response = await client.beta.chat.completions.parse(
         model=MODEL,
         messages=message_history,
@@ -43,44 +47,77 @@ async def handle_message(message):
     recommendation_response = response.choices[0].message.parsed
     print(f"is_recommendation_query: {recommendation_response.is_recommendation_query}")
     print(f"product_type: {recommendation_response.product_type}")
-    response_msg = cl.Message(content="")
-    await response_msg.send()
 
+    response_msg = None
     if recommendation_response.is_recommendation_query:
         if not recommendation_response.max_price:
-            response_msg.content = "What is the price range you are looking for ?"
-        elif len(recommendation_response.features)==0:
-            response_msg.content = "What are the features expected in the "+ recommendation_response.product_type + "?"
+            msg = "What price range or maximum price do you have mind?"
+            response_msg = cl.Message(content=msg)
+            await response_msg.send()
+        elif len(recommendation_response.features) == 0:
+            msg = f"Are there any specific features or characteristics you're looking for in the {recommendation_response.product_type}?"
+            response_msg = cl.Message(content=msg)
+            await response_msg.send()
         else:
-            await cl.Message(content="Processing your request...").send()
-            search_string = ("Top " + recommendation_response.product_type
-                             + " with price range of " + str(recommendation_response.max_price)
-                             + " with features " + recommendation_response.features)
-            print("Searching for " + search_string)
-            results = search(search_query=search_string, provider=Provider.DuckDuckGo)  #provider=Provider.Google
-            # load search result pages
-            documents = BeautifulSoupWebReader().load_data(urls=results)
+            response_msg = cl.Message(content="Processing your request...")
+            await response_msg.send()
+            search_string = (
+                f"Top {recommendation_response.product_type} with price range of "
+                f"{recommendation_response.max_price} with features "
+                f"{recommendation_response.features}"
+            )
+            response_msg.content = f"Searching for `{search_string}`..."
+            await response_msg.update()
 
-            # Create an index from the documents
-            index = VectorStoreIndex.from_documents(documents)
+            search_result = search_and_process(search_string, recommendation_response)
 
-            # Create a query engine
-            query_engine = index.as_query_engine()
-            response_msg.content = query_engine.query(search_string)
-            print(response_msg.content)
-        # response_msg.content = f"I recommend you buy the most expensive {recommendation_response.product_type} out there!"
+            response_msg.content = str(search_result)
+            await response_msg.update()
     else:
         response_msg.content = "Please suggest a type of product you would like to buy."
-    # await response_msg.update()
+        await response_msg.send()
 
     message_history.append({"role": "assistant", "content": response_msg.content})
-    print(message_history)
+    print(f"message_history: {message_history}")
     cl.user_session.set("message_history", message_history)
-    await cl.Message(content=response_msg.content).send()
+
+
+@traceable
+def search_and_process(search_string, recommendation_response):
+    results = search(
+        search_query=search_string, provider=Provider.DuckDuckGo, max_results=10
+    )  # provider=Provider.Google
+    print(f"results: {results}")
+
+    # Load search result pages
+    try:
+        documents = BeautifulSoupWebReader().load_data(urls=results)
+    except Exception as e:
+        print(f"Error loading data from URLs: {e}")
+        documents = []
+    print(f"Created {len(documents)} documents")
+
+    # Create an index from the documents
+    index = VectorStoreIndex.from_documents(documents)
+    print(f"Created VectorStoreIndex")
+
+    # Create a query engine
+    query_engine = index.as_query_engine()
+
+    # Search results prompt
+
+    search_prompt = SEARCH_RESULT_PROMPT.format(
+        recommendation_response.product_type,
+        recommendation_response.max_price,
+        recommendation_response.features,
+    )
+    print(f"search_prompt: {search_prompt}")
+    search_result = query_engine.query(search_prompt)
+    print(f"search_result: {search_result}")
+    return search_result
+
 
 if __name__ == "__main__":
     from chainlit.cli import run_chainlit
+
     run_chainlit(__file__)
-
-
-

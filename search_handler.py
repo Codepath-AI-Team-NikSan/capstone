@@ -6,6 +6,7 @@ from enum import Enum
 
 Provider = Enum("Provider", "Google DuckDuckGo")
 
+
 # Search on Google using BS4 manually and get individually fetch the results
 def google_search(query, max_results=10):
     query = urllib.parse.quote(query)
@@ -15,17 +16,14 @@ def google_search(query, max_results=10):
     }
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(response.text, "html.parser")
         results = []
-        for g in soup.find_all('div', class_='g'):
-            title = g.find('h3')
-            link = g.find('a', href=True)
+        for g in soup.find_all("div", class_="g"):
+            title = g.find("h3")
+            link = g.find("a", href=True)
 
             if title and link:
-                results.append({
-                    'title': title.text,
-                    'href': link['href']
-                })
+                results.append({"title": title.text, "href": link["href"]})
         return results
     else:
         print(f"Error: {response.status_code}")
@@ -39,7 +37,7 @@ def extract_page_content(url):
     try:
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
-            soup = BeautifulSoup(response.text, 'html.parser')
+            soup = BeautifulSoup(response.text, "html.parser")
             # Remove scripts, styles, and ads
             for script in soup(["script", "style", "header", "footer", "nav", "aside"]):
                 script.decompose()
@@ -55,9 +53,11 @@ def extract_page_content(url):
         return ""
 
 
-def search(search_query, provider=Provider.DuckDuckGo, fetch_docs=False, max_results=20):
+def search(
+    search_query, provider=Provider.DuckDuckGo, fetch_docs=False, max_results=20
+):
     results = None
-    if provider==Provider.DuckDuckGo:
+    if provider == Provider.DuckDuckGo:
         results = DDGS().text(search_query, max_results=max_results)
     else:
         results = google_search(search_query)
@@ -66,9 +66,8 @@ def search(search_query, provider=Provider.DuckDuckGo, fetch_docs=False, max_res
         all_content = []
         for result in results:
             print(f"Fetching content from: {result['href']}")
-            page_content = extract_page_content(result['href'])
+            page_content = extract_page_content(result["href"])
             all_content.append(page_content)
         return set(all_content)
     else:
-        return [result['href'] for result in results]
-
+        return [result["href"] for result in results]
