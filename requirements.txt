@@ -20,6 +20,7 @@ dataclasses-json==0.6.7
 Deprecated==1.2.14
 dirtyjson==1.0.8
 distro==1.9.0
+duckduckgo_search==6.2.12
 fastapi==0.112.4
 feedfinder2==0.0.4
 feedparser==6.0.11
@@ -84,6 +85,7 @@ packaging==23.2
 pandas==2.2.2
 pillow==10.4.0
 playwright==1.47.0
+primp==0.6.2
 protobuf==4.25.5
 pydantic==2.9.2
 pydantic_core==2.23.4

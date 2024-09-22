@@ -5,7 +5,7 @@ from langsmith.wrappers import wrap_openai
 from langsmith import traceable
 from prompts import INITIAL_SYSTEM_PROMPT
 from pydantic import BaseModel
-
+from search_handler import search, Provider
 
 API_KEY = os.getenv("OPENAI_API_KEY")
 ENDPOINT_URL = os.getenv("OPENAI_ENDPOINT")
@@ -18,6 +18,7 @@ class RecommendationResponse(BaseModel):
     is_recommendation_query: bool
     product_type: str
     max_price: int
+    features: str
 
 
 @traceable
@@ -41,7 +42,17 @@ async def handle_message(message):
     print(f"is_recommendation_query: {recommendation_response.is_recommendation_query}")
     print(f"product_type: {recommendation_response.product_type}")
     if recommendation_response.is_recommendation_query:
-        response_text = f"I recommend you buy the most expensive {recommendation_response.product_type} out there!"
+        if not recommendation_response.max_price:
+            response_text = f"What is the price range you are looking for ?"
+        elif len(recommendation_response.features)==0:
+            response_text = f"What are the features expected in the "+ recommendation_response.product_type + "?"
+        else:
+            search_string = ("Top " + recommendation_response.product_type
+                             + " with price range of " + str(recommendation_response.max_price)
+                             + " and features " + recommendation_response.features)
+            print("Searching for " + search_string)
+            results = search(search_query=search_string, provider=Provider.DuckDuckGo)
+        # response_text = f"I recommend you buy the most expensive {recommendation_response.product_type} out there!"
     else:
         response_text = "Please suggest a type of product you would like to buy."
 
@@ -49,3 +60,7 @@ async def handle_message(message):
     print(message_history)
     cl.user_session.set("message_history", message_history)
     await cl.Message(content=response_text).send()
+
+if __name__ == "__main__":
+    from chainlit.cli import run_chainlit
+    run_chainlit(__file__)
