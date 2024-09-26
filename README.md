@@ -66,3 +66,8 @@ After setting up the project, users can interact with the AI chat interface to a
 - [x] ~~(stretch) Set up LlamaIndex loaders (e.g., email, Slack, wherever your data is coming from) (@sanal)~~
 - [x] ~~(stretch) Set up your RAG pipeline (@sanal)~~
 - [x] ~~(stretch) Run an LLM-as-a-judge evaluation test (@nikrad)~~
+
+## Week 3 Capstone Milestones
+- [x] ~~Implement a RAG pipeline (@sanal)~~
+- [x] ~~Implement at least one function call (@nikrad)~~
+- [] (stretch) Run an LLM-as-a-judge evaluation test
