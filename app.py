@@ -3,6 +3,8 @@ import os
 
 import chainlit as cl
 import openai
+
+from dotenv import load_dotenv
 from langsmith import traceable
 from langsmith.wrappers import wrap_openai
 from llama_index.core import VectorStoreIndex
@@ -12,6 +14,8 @@ from helpers import dprint
 from prompts import FN_CALL_SYSTEM_PROMPT, FN_CALL_RAG_PROMPT
 from search_handler import search, Provider
 from tool_calls import PRODUCT_SEARCH_TOOL
+
+load_dotenv()
 
 API_KEY = os.getenv("OPENAI_API_KEY")
 ENDPOINT_URL = os.getenv("OPENAI_ENDPOINT")
@@ -91,7 +95,7 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
     await ui_status_message.update()
 
     search_results = search(
-        search_query=search_query, provider=Provider.DuckDuckGo, max_results=20
+        search_query=search_query, provider=Provider.Google, max_results=20
     )
     ui_status_message.content = (
         f"Found {len(search_results)} results. Reading over them now..."
