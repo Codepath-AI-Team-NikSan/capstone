@@ -4,6 +4,7 @@ import os
 import chainlit as cl
 import openai
 
+from datetime import datetime
 from dotenv import load_dotenv
 from langsmith import traceable
 from langsmith.wrappers import wrap_openai
@@ -122,7 +123,7 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
     dprint(f"Created VectorStoreIndex")
     # Create a query engine
     query_engine = index.as_query_engine()
-    rag_prompt = FN_CALL_RAG_PROMPT.format(llm_prompt)
+    rag_prompt = FN_CALL_RAG_PROMPT.format(llm_prompt=llm_prompt)
     dprint(f"rag_prompt: {rag_prompt}")
     rag_response = str(query_engine.query(rag_prompt))
     dprint(f"rag_response: {rag_response}")
@@ -136,7 +137,12 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
 @traceable
 @cl.on_chat_start
 async def handle_chat_start():
-    message_history = [{"role": "system", "content": FN_CALL_SYSTEM_PROMPT}]
+    # Include the actually current date in the system prompt for the LLM for times when
+    # it decides to add the current year to the search query
+    today = datetime.today()
+    current_date = today.strftime("%A, %B %d, %Y")
+    system_prompt = FN_CALL_SYSTEM_PROMPT.format(current_date=current_date)
+    message_history = [{"role": "system", "content": system_prompt}]
     cl.user_session.set("message_history", message_history)
 
 

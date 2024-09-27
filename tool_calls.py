@@ -8,7 +8,7 @@ PRODUCT_SEARCH_TOOL = {
             "properties": {
                 "google_search_query": {
                     "type": "string",
-                    "description": "The query used to search Google for relevant product reviews and recommendations. Do not include the current year in the search query unless it's relevant to the user's needs.",
+                    "description": "The query used to search Google for relevant product reviews and recommendations.",
                 },
                 "llm_prompt": {
                     "type": "string",

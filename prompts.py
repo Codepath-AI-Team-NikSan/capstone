@@ -19,10 +19,12 @@ You are a helpful product expert who offers product recommendations. When a user
 you find out what the customer's needs are (e.g. what type of product the user is looking for, their ideal price range, \
 other desired features, etc). Use the supplied tools to assist the user. Always look for research-backed product \
 recommendations.
+
+Today's date is {current_date}.
 """
 
 FN_CALL_RAG_PROMPT = """
-{}
+{llm_prompt}
 
 Your response should address the user directly. It can include up to 3 product recommendations. If you include multiple \
 product recommendations, you must rank them. For each recommendation, include the product name, price, a brief description \
