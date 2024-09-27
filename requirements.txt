@@ -28,6 +28,7 @@ filelock==3.16.1
 filetype==1.2.0
 frozenlist==1.4.1
 fsspec==2024.9.0
+google_search_results==2.4.2
 googleapis-common-protos==1.65.0
 greenlet==3.0.3
 grpcio==1.66.1
@@ -106,6 +107,7 @@ requests-file==2.1.0
 scikit-learn==1.5.2
 scipy==1.14.1
 selenium==4.25.0
+serpapi==0.1.5
 setuptools==75.1.0
 sgmllib3k==1.0.0
 simple-websocket==1.0.0
