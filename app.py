@@ -9,6 +9,7 @@ from langsmith import traceable
 from langsmith.wrappers import wrap_openai
 from llama_index.core import VectorStoreIndex
 
+from async_web_reader import AsyncWebReader
 from CustomWebReader import CustomWebReader
 from helpers import dprint
 from prompts import FN_CALL_SYSTEM_PROMPT, FN_CALL_RAG_PROMPT
@@ -104,7 +105,9 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
 
     # Load search result pages
     try:
-        documents = CustomWebReader().load_data(urls=search_results)
+        # reader = CustomWebReader()
+        reader = AsyncWebReader()
+        documents = await reader.load_data(urls=search_results)
     except Exception as e:
         dprint(f"Error loading data from URLs: {e}")
         documents = []
