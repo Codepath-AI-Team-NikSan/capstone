@@ -26,6 +26,12 @@ GEN_KWARGS = {"model": MODEL, "temperature": 0.3, "max_tokens": 500}
 
 client = wrap_openai(openai.AsyncClient(api_key=API_KEY, base_url=ENDPOINT_URL))
 
+WELCOME_MSG = """\
+Welcome! I'm here to help you find the best products based on expert research and real-world testing. \
+Whether you're shopping for tech, home goods, or anything in between, I'm ready to offer recommendations \
+tailored to your needs. How can I help you find what you're looking for?
+"""
+
 
 @traceable
 async def generate_response(client, message_history, gen_kwargs):
@@ -139,6 +145,7 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
 async def handle_chat_start():
     # Include the actually current date in the system prompt for the LLM for times when
     # it decides to add the current year to the search query
+    await cl.Message(content=WELCOME_MSG).send()
     today = datetime.today()
     current_date = today.strftime("%A, %B %d, %Y")
     system_prompt = FN_CALL_SYSTEM_PROMPT.format(current_date=current_date)
