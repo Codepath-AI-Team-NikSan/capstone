@@ -131,10 +131,16 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
     query_engine = index.as_query_engine()
     rag_prompt = FN_CALL_RAG_PROMPT.format(llm_prompt=llm_prompt)
     dprint(f"rag_prompt: {rag_prompt}")
-    rag_response = str(query_engine.query(rag_prompt))
-    dprint(f"rag_response: {rag_response}")
+    rag_results = query_engine.query(rag_prompt)
+    rag_response = str(rag_results.response)
+    rag_sources = None
+    if rag_results.metadata:
+        citations = [rag_results.metadata[source]['url'] for source in rag_results.metadata]
+        if citations:
+            rag_sources = str('\n'.join(citations))
+    dprint(f"rag_response: {rag_response} citation: {rag_sources}")
 
-    ui_status_message.content = rag_response
+    ui_status_message.content = rag_response + "\n\n\nSources \n" + rag_sources
     await ui_status_message.update()
 
     return rag_response
