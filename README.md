@@ -70,4 +70,4 @@ After setting up the project, users can interact with the AI chat interface to a
 ## Week 3 Capstone Milestones
 - [x] ~~Implement a RAG pipeline (@sanal)~~
 - [x] ~~Implement at least one function call (@nikrad)~~
-- [ ] (stretch) Run an LLM-as-a-judge evaluation test
+- [x] ~~(stretch) Run an LLM-as-a-judge evaluation test (@sanal)~~
