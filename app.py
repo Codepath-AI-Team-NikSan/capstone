@@ -14,7 +14,8 @@ from async_web_reader import AsyncWebReader
 from helpers import dprint
 from prompts import FN_CALL_SYSTEM_PROMPT, FN_CALL_RAG_PROMPT, PURCHASING_LINKS_PROMPT
 from search_handler import search, Provider
-from tool_calls import PRODUCT_SEARCH_TOOL
+from tool_calls import PRODUCT_SEARCH_TOOL, ADD_TO_WISH_LIST_TOOL, GET_WISH_LIST_TOOL, REMOVE_FROM_WISH_LIST_TOOL
+from wishlist import add_to_wishlist, get_wishlist, remove_from_wishlist
 
 load_dotenv()
 
@@ -48,7 +49,8 @@ async def generate_response(client, message_history, gen_kwargs):
     ui_response_message = None
 
     stream = await client.chat.completions.create(
-        messages=message_history, stream=True, tools=[PRODUCT_SEARCH_TOOL], **gen_kwargs
+        messages=message_history, stream=True, tools=[PRODUCT_SEARCH_TOOL,ADD_TO_WISH_LIST_TOOL,
+                                                      GET_WISH_LIST_TOOL, REMOVE_FROM_WISH_LIST_TOOL], **gen_kwargs
     )
     response = {}
     async for part in stream:
@@ -236,7 +238,45 @@ async def handle_message(message):
         )
         # Update the message history with the RAG response
         message_history.append({"role": "assistant", "content": rag_response})
-
+    elif response.get("func_call") and response["func_call"]["name"] == "add_to_wishlist":
+        arguments = json.loads(response["func_call"]["arguments"])
+        name = arguments["name"]
+        price = arguments["price"]
+        description = arguments["description"]
+        sources = arguments["sources"]
+        buy_links = arguments["buy_links"] if 'buy_links' in arguments else None
+        message_history.append(
+            {
+                "role": "assistant",
+                "content": f'Calling add_to_wishlist("{name}", "{price}","{description}", "{sources}", "{buy_links}")',
+            }
+        )
+        response = add_to_wishlist(name, price, description, sources, buy_links)
+        await cl.Message(content=response).send()
+        message_history.append({"role": "assistant", "content": "wishlist :" + get_wishlist(wishlist_str=True)})
+    elif response.get("func_call") and response["func_call"]["name"] == "get_wishlist":
+        message_history.append(
+            {
+                "role": "assistant",
+                "content": f'Calling get_wishlist()',
+            }
+        )
+        response = get_wishlist(wishlist_str=True)
+        await cl.Message(content=response).send()
+    elif response.get("func_call") and response["func_call"]["name"] == "remove_from_wishlist":
+        arguments = json.loads(response["func_call"]["arguments"])
+        name = arguments["name"]
+        message_history.append(
+            {
+                "role": "assistant",
+                "content": f'Calling remove_from_wishlist("{name}")',
+            }
+        )
+        response = remove_from_wishlist(name)
+        await cl.Message(content=response).send()
+        wishlist = get_wishlist(wishlist_str=True)
+        if wishlist is not None:
+            message_history.append({"role": "assistant", "content": "wishlist :" + get_wishlist(wishlist_str=True)})
     elif response.get("content"):
         message_history.append({"role": "assistant", "content": response["content"]})
 

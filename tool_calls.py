@@ -20,3 +20,66 @@ PRODUCT_SEARCH_TOOL = {
         },
     },
 }
+
+
+ADD_TO_WISH_LIST_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "add_to_wishlist",
+        "description": "User will be able to add products to a wishlist to recall at a later time",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the product",
+                },
+                "price": {
+                    "type": "string",
+                    "description": "Price of the product"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Description of the product, contains the features, pros and cons"
+                },
+                "sources": {
+                    "type": "string",
+                    "description": "Sources for the review"
+                },
+                "buy_links": {
+                    "type": "string",
+                    "description": "Description of the product, contains the features, pros and cons"
+                },
+            },
+            "required": ["name","price","description", "sources"],
+            "additionalProperties": False,
+        },
+    },
+}
+
+GET_WISH_LIST_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "get_wishlist",
+        "description": "Get wishlist"
+    },
+}
+
+REMOVE_FROM_WISH_LIST_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "remove_from_wishlist",
+        "description": "User remove products from the wishlist",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the product, resolve to the full name of the product if required",
+                }
+            },
+            "required": ["name"],
+            "additionalProperties": False,
+        },
+    },
+}
