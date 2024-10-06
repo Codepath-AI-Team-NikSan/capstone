@@ -140,6 +140,7 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
     await ui_status_message.update()
 
     search_results = search(search_query=search_query, max_results=20)
+    search_results = search(search_query=search_query, max_results=15)
     ui_status_message.content = (
         f"Found {len(search_results)} results. Reading over them now..."
     )
@@ -171,6 +172,10 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
     dprint(f"rag_results.metadata: {rag_results.metadata}")
 
     # Add sources for product recommendations
+    ui_status_message.content = (
+        f"Found {len(search_results)} results. Reading over them now..."
+    )
+    await ui_status_message.update()
     source_urls = {
         rag_results.metadata[source]["url"] for source in rag_results.metadata
     }
@@ -178,9 +183,11 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
     # Find purchasing links for product recommendations
     product_links_list = get_product_links_list(webpages, source_urls, rag_response)
 
-    recommendation_response = f"{rag_response}\n\n\nReview Source(s):\n{sources_list}"
+    recommendation_response = (
+        f"{rag_response}\n\n\n**Review Source(s):**\n{sources_list}"
+    )
     if len(product_links_list):
-        recommendation_response += f"\n\n\nLink(s) to Buy:\n{product_links_list}"
+        recommendation_response += f"\n\n\n**Link(s) to Buy:**\n{product_links_list}"
 
     ui_status_message.content = recommendation_response
     await ui_status_message.update()
