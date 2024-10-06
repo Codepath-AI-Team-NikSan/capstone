@@ -139,7 +139,6 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
     ui_status_message.content = f'Searching the web for `"{search_query}"`...'
     await ui_status_message.update()
 
-    search_results = search(search_query=search_query, max_results=20)
     search_results = search(search_query=search_query, max_results=15)
     ui_status_message.content = (
         f"Found {len(search_results)} results. Reading over them now..."
