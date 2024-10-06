@@ -3,7 +3,6 @@ import time
 
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
-from llama_index.core import Document
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -60,10 +59,11 @@ class AsyncWebReader:
         dprint(f"Done scraping content from {url}...")
 
         # Return the cleaned text content
-        return Document(
-            text=soup.get_text(separator="\n", strip=True),
-            metadata={"url": url},
-        )
+        return {
+            "text": soup.get_text(separator="\n", strip=True),
+            "html": soup.prettify(),
+            "url": url,
+        }
 
     async def _fetch_content_async(self, url):
         # Run blocking content fetch in the custom thread pool executor with timeout
@@ -86,12 +86,12 @@ class AsyncWebReader:
         # Use asyncio.gather to fetch content from URLs concurrently
         tasks = [self._fetch_content_async(url) for url in urls]
         dprint("Done fetching content from URLs...")
-        documents = await asyncio.gather(*tasks)
+        webpages = await asyncio.gather(*tasks)
 
         # Filter out any None results from failed requests
-        documents = [doc for doc in documents if doc is not None]
+        webpages = [page for page in webpages if page is not None]
 
-        return documents
+        return webpages
 
     def close_executor(self):
         # Properly shutdown the executor

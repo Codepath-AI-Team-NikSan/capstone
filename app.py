@@ -8,12 +8,11 @@ from datetime import datetime
 from dotenv import load_dotenv
 from langsmith import traceable
 from langsmith.wrappers import wrap_openai
-from llama_index.core import VectorStoreIndex
+from llama_index.core import Document, VectorStoreIndex
 
 from async_web_reader import AsyncWebReader
-from CustomWebReader import CustomWebReader
 from helpers import dprint
-from prompts import FN_CALL_SYSTEM_PROMPT, FN_CALL_RAG_PROMPT
+from prompts import FN_CALL_SYSTEM_PROMPT, FN_CALL_RAG_PROMPT, PURCHASING_LINKS_PROMPT
 from search_handler import search, Provider
 from tool_calls import PRODUCT_SEARCH_TOOL
 
@@ -85,6 +84,37 @@ async def generate_response(client, message_history, gen_kwargs):
     return response
 
 
+def get_sources_list(source_urls):
+    """
+    Formats the sources from the given RAG results.
+    """
+    citations = [f"• {url}" for url in source_urls]
+    sources_list = "\n".join(citations)
+    return sources_list
+
+
+def get_product_links_list(webpages, source_urls, recommendation_blurb):
+    """
+    Extracts and formats the purchasing links from the given product recommendation blurb.
+    """
+    product_links_list = ""
+    docs = [
+        Document(text=page["html"]) for page in webpages if page["url"] in source_urls
+    ]
+    if not len(docs):
+        return product_links_list
+
+    index = VectorStoreIndex.from_documents(docs)
+    query_engine = index.as_query_engine()
+    prompt = PURCHASING_LINKS_PROMPT.format(recommendation_blurb=recommendation_blurb)
+    product_links_rag_response = str(query_engine.query(prompt).response)
+    dprint(f"product_links_rag_response: {product_links_rag_response}")
+    if not product_links_rag_response:
+        return product_links_list
+
+    return "\n".join([f"• {link}\n" for link in json.loads(product_links_rag_response)])
+
+
 @traceable
 async def search_and_process(search_query, llm_prompt, ui_status_message):
     """
@@ -102,9 +132,7 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
     ui_status_message.content = f'Searching the web for `"{search_query}"`...'
     await ui_status_message.update()
 
-    search_results = search(
-        search_query=search_query, provider=Provider.Google, max_results=20
-    )
+    search_results = search(search_query=search_query, max_results=20)
     ui_status_message.content = (
         f"Found {len(search_results)} results. Reading over them now..."
     )
@@ -112,43 +140,45 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
 
     # Load search result pages
     try:
-        # reader = CustomWebReader()
         reader = AsyncWebReader()
-        documents = await reader.load_data(urls=search_results)
+        webpages = await reader.load_data(urls=search_results)
     except Exception as e:
         dprint(f"Error loading data from URLs: {e}")
-        documents = []
-
+        webpages = []
     ui_status_message.content = (
         f"Reviewing each of the {len(search_results)} results closely..."
     )
     await ui_status_message.update()
 
-    # Create an index from the documents
-    index = VectorStoreIndex.from_documents(documents)
-    dprint(f"Created VectorStoreIndex")
-    # Create a query engine
+    # Generate product recommendations
+    docs = [
+        Document(text=page["text"], metadata={"url": page["url"]}) for page in webpages
+    ]
+    index = VectorStoreIndex.from_documents(docs)
     query_engine = index.as_query_engine()
     rag_prompt = FN_CALL_RAG_PROMPT.format(llm_prompt=llm_prompt)
     dprint(f"rag_prompt: {rag_prompt}")
     rag_results = query_engine.query(rag_prompt)
     rag_response = str(rag_results.response)
-    rag_sources = None
-    if rag_results.metadata:
-        dprint(f"rag_results.metadata: {rag_results.metadata}")
-        citations = {
-            f"• {rag_results.metadata[source]['url']}"
-            for source in rag_results.metadata
-        }
-        if citations:
-            rag_sources = str("\n".join(citations))
     dprint(f"rag_response: {rag_response}")
-    dprint(f"rag_sources: {rag_sources}")
+    dprint(f"rag_results.metadata: {rag_results.metadata}")
 
-    ui_status_message.content = rag_response + "\n\n\nSources:\n" + rag_sources
+    # Add sources for product recommendations
+    source_urls = {
+        rag_results.metadata[source]["url"] for source in rag_results.metadata
+    }
+    sources_list = get_sources_list(source_urls)
+    # Find purchasing links for product recommendations
+    product_links_list = get_product_links_list(webpages, source_urls, rag_response)
+
+    recommendation_response = f"{rag_response}\n\n\nReview Source(s):\n{sources_list}"
+    if len(product_links_list):
+        recommendation_response += f"\n\n\nLink(s) to Buy:\n{product_links_list}"
+
+    ui_status_message.content = recommendation_response
     await ui_status_message.update()
 
-    return rag_response
+    return recommendation_response
 
 
 @traceable
