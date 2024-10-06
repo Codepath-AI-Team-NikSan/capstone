@@ -32,7 +32,7 @@ class AsyncWebReader:
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
 
         # Timeout (in seconds) for AsyncWebReader to execute fetching contents
-        self.timeout = 25
+        self.timeout = 30
 
     def _fetch_content(self, url):
         dprint(f"Fetching content from {url}...")

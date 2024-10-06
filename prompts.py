@@ -38,12 +38,15 @@ product recommendations, you must rank them. For each recommendation, include:
 
 PURCHASING_LINKS_PROMPT = """\
 Find the appropriate purchasing link for EACH of the products that are recommended in blurb below. \
-Return all of the product purchasing links you've found in a single list. If you are unable to find any product \
-purchasing links, return an empty list. The output should be in the following structured JSON format:
+Return all of the product purchasing links you've found in a list, where each item in the list is a two-item list that \
+includes the product name and the product link. If you are unable to find any product purchasing links, return an empty list. \
+The output should be in the following valid structured JSON format:
 
-["https://www.amazon.com/Habanero-us_Footwear_Size_System-Numeric-Medium-Numeric_11_Point_5/dp/B0B1N6JSR6/", \
-"https://www.jcrew.com/p/mens/categories/clothing/shirts/broken-in-oxford/broken-in-organic-cotton-oxford-shirt/BE996", \
-"https://www.nordstrom.com/s/coya-compact-lightweight-travel-stroller/7517626"]
+[
+    ["COYA Compact Lightweight Travel Stroller", "https://www.nordstrom.com/s/coya-compact-lightweight-travel-stroller/7517626"], 
+    ["J.Crew Broken-In Organic Cotton Oxford Shirt", "https://www.nytimes.com/wirecutter/reviews/best-mens-button-up-shirts/"],
+    ["JadeYoga Harmony Mat", "https://www.amazon.com/dp/B08X162DJ4/"]
+  
 
 BLURB:
 {recommendation_blurb}

@@ -112,7 +112,14 @@ def get_product_links_list(webpages, source_urls, recommendation_blurb):
     if not product_links_rag_response:
         return product_links_list
 
-    return "\n".join([f"• {link}\n" for link in json.loads(product_links_rag_response)])
+    product_links_result = json.loads(product_links_rag_response)
+    return "\n".join(
+        [
+            f"• {product_name}: {link}\n"
+            for (product_name, link) in json.loads(product_links_rag_response)
+            if len(link)
+        ]
+    )
 
 
 @traceable
