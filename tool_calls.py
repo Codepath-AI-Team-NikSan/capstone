@@ -83,3 +83,43 @@ REMOVE_FROM_WISH_LIST_TOOL = {
         },
     },
 }
+
+
+ADD_TO_ORDER_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "add_to_orders",
+        "description": "Allow the user to order the product or checkout the product, if quantity is not mentioned assume quantity as one",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "Name of the product",
+                },
+                "price": {
+                    "type": "string",
+                    "description": "Price of the product"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Description of the product, contains the features, pros and cons"
+                },
+                "quantity": {
+                    "type": "number",
+                    "description": "Quantity"
+                },
+            },
+            "required": ["name","price","description", "quantity"],
+            "additionalProperties": False,
+        },
+    },
+}
+
+GET_ORDERS_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "get_orders",
+        "description": "Get Orders"
+    },
+}

@@ -14,8 +14,9 @@ from async_web_reader import AsyncWebReader
 from helpers import dprint
 from prompts import FN_CALL_SYSTEM_PROMPT, FN_CALL_RAG_PROMPT, PURCHASING_LINKS_PROMPT
 from search_handler import search, Provider
-from tool_calls import PRODUCT_SEARCH_TOOL, ADD_TO_WISH_LIST_TOOL, GET_WISH_LIST_TOOL, REMOVE_FROM_WISH_LIST_TOOL
+from tool_calls import PRODUCT_SEARCH_TOOL, ADD_TO_WISH_LIST_TOOL, GET_WISH_LIST_TOOL, REMOVE_FROM_WISH_LIST_TOOL, ADD_TO_ORDER_TOOL, GET_ORDERS_TOOL
 from wishlist import add_to_wishlist, get_wishlist, remove_from_wishlist
+from orders import  add_to_orders, get_orders
 
 load_dotenv()
 
@@ -50,7 +51,8 @@ async def generate_response(client, message_history, gen_kwargs):
 
     stream = await client.chat.completions.create(
         messages=message_history, stream=True, tools=[PRODUCT_SEARCH_TOOL,ADD_TO_WISH_LIST_TOOL,
-                                                      GET_WISH_LIST_TOOL, REMOVE_FROM_WISH_LIST_TOOL], **gen_kwargs
+                                                      GET_WISH_LIST_TOOL, REMOVE_FROM_WISH_LIST_TOOL,
+                                                      ADD_TO_ORDER_TOOL, GET_ORDERS_TOOL], **gen_kwargs
     )
     response = {}
     async for part in stream:
@@ -177,8 +179,9 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
         f"Found {len(search_results)} results. Reading over them now..."
     )
     await ui_status_message.update()
+
     source_urls = {
-        rag_results.metadata[source]["url"] for source in rag_results.metadata
+        rag_results.metadata[source]["url"] for source in rag_results.metadata if rag_results.metadata[source]["url"]
     }
     sources_list = get_sources_list(source_urls)
     # Find purchasing links for product recommendations
@@ -277,6 +280,30 @@ async def handle_message(message):
         wishlist = get_wishlist(wishlist_str=True)
         if wishlist is not None:
             message_history.append({"role": "assistant", "content": "wishlist :" + get_wishlist(wishlist_str=True)})
+    elif response.get("func_call") and response["func_call"]["name"] == "add_to_orders":
+        arguments = json.loads(response["func_call"]["arguments"])
+        name = arguments["name"]
+        price = arguments["price"]
+        description = arguments["description"]
+        quantity = arguments["quantity"]
+        message_history.append(
+            {
+                "role": "assistant",
+                "content": f'Calling add_to_orders("{name}", "{price}","{description}", "{quantity}")',
+            }
+        )
+        response = add_to_orders(name, price, description, quantity)
+        await cl.Message(content=response).send()
+        message_history.append({"role": "assistant", "content": "wishlist :" + get_orders(orders_str=True)})
+    elif response.get("func_call") and response["func_call"]["name"] == "get_orders":
+        message_history.append(
+            {
+                "role": "assistant",
+                "content": f'Calling get_orders()',
+            }
+        )
+        response = get_orders(orders_str=True)
+        await cl.Message(content=response).send()
     elif response.get("content"):
         message_history.append({"role": "assistant", "content": response["content"]})
 
