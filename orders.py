@@ -35,11 +35,11 @@ def get_orders(orders_str=False):
         if orders:
             count = 1
             for order in orders:
-                response += f'\nItem {count}\nName: {order['name']}'
-                response += f'\nPrice: {order['price']}'
-                response += f'\nDescription: {order['description']}'
-                response += f'\nQuantity: {order['qty']}'
-                response += f'\n\n'
+                response += f"\nItem {count}\nName: {order['name']}"
+                response += f"\nPrice: {order['price']}"
+                response += f"\nDescription: {order['description']}"
+                response += f"\nQuantity: {order['qty']}"
+                response += f"\n\n"
                 count += 1
         else:
             response = f'\nWishlist Empty!'

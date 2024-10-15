@@ -38,12 +38,12 @@ def get_wishlist(wishlist_str=False):
         if wishlist:
             count = 1
             for wishlist_entry in wishlist:
-                response += f'\nItem {count}\nName: {wishlist_entry['name']}'
-                response += f'\nPrice: {wishlist_entry['price']}'
-                response += f'\nDescription: {wishlist_entry['description']}'
-                response += f'\nSources: {wishlist_entry['sources']}'
-                response += f'\nBuy Links: {wishlist_entry['buy_links']}'
-                response += f'\n\n'
+                response += f"\nItem {count}\nName: {wishlist_entry['name']}"
+                response += f"\nPrice: {wishlist_entry['price']}"
+                response += f"\nDescription: {wishlist_entry['description']}"
+                response += f"\nSources: {wishlist_entry['sources']}"
+                response += f"\nBuy Links: {wishlist_entry['buy_links']}"
+                response += f"\n\n"
                 count += 1
         else:
             response = f'\nWishlist Empty!'
