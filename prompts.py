@@ -40,13 +40,7 @@ PURCHASING_LINKS_PROMPT = """\
 Find the appropriate purchasing link for EACH of the products that are recommended in blurb below. \
 Return all of the product purchasing links you've found in a list, where each item in the list is a two-item list that \
 includes the product name and the product link. If you are unable to find any product purchasing links, return an empty list. \
-The output should be in the following valid structured JSON format:
-
-[
-    ["COYA Compact Lightweight Travel Stroller", "https://www.nordstrom.com/s/coya-compact-lightweight-travel-stroller/7517626"], 
-    ["J.Crew Broken-In Organic Cotton Oxford Shirt", "https://www.nytimes.com/wirecutter/reviews/best-mens-button-up-shirts/"],
-    ["JadeYoga Harmony Mat", "https://www.amazon.com/dp/B08X162DJ4/"]
-  
+The output MUST be valid JSON.
 
 BLURB:
 {recommendation_blurb}

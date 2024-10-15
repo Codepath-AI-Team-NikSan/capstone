@@ -34,24 +34,18 @@ ADD_TO_WISH_LIST_TOOL = {
                     "type": "string",
                     "description": "Name of the product",
                 },
-                "price": {
-                    "type": "string",
-                    "description": "Price of the product"
-                },
+                "price": {"type": "string", "description": "Price of the product"},
                 "description": {
                     "type": "string",
-                    "description": "Description of the product, contains the features, pros and cons"
+                    "description": "Description of the product, contains the features, pros and cons",
                 },
-                "sources": {
-                    "type": "string",
-                    "description": "Sources for the review"
-                },
+                "sources": {"type": "string", "description": "Sources for the review"},
                 "buy_links": {
                     "type": "string",
-                    "description": "Description of the product, contains the features, pros and cons"
+                    "description": "Description of the product, contains the features, pros and cons",
                 },
             },
-            "required": ["name","price","description", "sources"],
+            "required": ["name", "price", "description", "sources"],
             "additionalProperties": False,
         },
     },
@@ -59,10 +53,7 @@ ADD_TO_WISH_LIST_TOOL = {
 
 GET_WISH_LIST_TOOL = {
     "type": "function",
-    "function": {
-        "name": "get_wishlist",
-        "description": "Get wishlist"
-    },
+    "function": {"name": "get_wishlist", "description": "Get wishlist"},
 }
 
 REMOVE_FROM_WISH_LIST_TOOL = {
@@ -97,20 +88,14 @@ ADD_TO_ORDER_TOOL = {
                     "type": "string",
                     "description": "Name of the product",
                 },
-                "price": {
-                    "type": "string",
-                    "description": "Price of the product"
-                },
+                "price": {"type": "string", "description": "Price of the product"},
                 "description": {
                     "type": "string",
-                    "description": "Description of the product, contains the features, pros and cons"
+                    "description": "Description of the product, contains the features, pros and cons",
                 },
-                "quantity": {
-                    "type": "number",
-                    "description": "Quantity"
-                },
+                "quantity": {"type": "number", "description": "Quantity"},
             },
-            "required": ["name","price","description", "quantity"],
+            "required": ["name", "price", "description", "quantity"],
             "additionalProperties": False,
         },
     },
@@ -118,8 +103,5 @@ ADD_TO_ORDER_TOOL = {
 
 GET_ORDERS_TOOL = {
     "type": "function",
-    "function": {
-        "name": "get_orders",
-        "description": "Get Orders"
-    },
+    "function": {"name": "get_orders", "description": "Get Orders"},
 }

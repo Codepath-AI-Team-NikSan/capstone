@@ -1,33 +1,33 @@
 import json
 import os
 
-WISHLIST_FILE = 'wishlist.json'
+WISHLIST_FILE = "wishlist.json"
 
 
 def load_wishlist():
     if os.path.exists(WISHLIST_FILE):
-        with open(WISHLIST_FILE, 'r') as file:
+        with open(WISHLIST_FILE, "r") as file:
             return json.load(file)
     return []
 
 
 def save_wishlist(wishlist):
-    with open(WISHLIST_FILE, 'w') as file:
+    with open(WISHLIST_FILE, "w") as file:
         json.dump(wishlist, file, indent=4)
 
 
 def add_to_wishlist(name, price, description, sources, buy_links):
     wishlist = load_wishlist()
     item = {
-        'name': name,
-        'price': price,
-        'description': description,
-        'sources': sources,
-        'buy_links': buy_links
+        "name": name,
+        "price": price,
+        "description": description,
+        "sources": sources,
+        "buy_links": buy_links,
     }
     wishlist.append(item)
     save_wishlist(wishlist)
-    return(f'Added to wishlist: {name}')
+    return f"✅ Added to your wishlist: {name}"
 
 
 def get_wishlist(wishlist_str=False):
@@ -46,7 +46,7 @@ def get_wishlist(wishlist_str=False):
                 response += f"\n\n"
                 count += 1
         else:
-            response = f'\nWishlist Empty!'
+            response = f"\n🫙 Your wishlist is empty!"
         return response
     else:
         return wishlist
@@ -55,10 +55,12 @@ def get_wishlist(wishlist_str=False):
 def remove_from_wishlist(name):
     """Remove an item from the wishlist by name."""
     wishlist = load_wishlist()
-    new_wishlist = [item for item in wishlist if name.lower() not in item['name'].lower()]
+    new_wishlist = [
+        item for item in wishlist if name.lower() not in item["name"].lower()
+    ]
 
     if len(new_wishlist) < len(wishlist):
         save_wishlist(new_wishlist)
-        return(f'Removed from wishlist: {name}')
+        return f"❌ Removed from your wishlist: {name}"
     else:
-        return(f'Item not found in wishlist: {name}')
+        return f"Item not found in wishlist: {name}"
