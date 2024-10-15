@@ -163,3 +163,5 @@ cython_debug/
 
 wishlist.json
 orders.json
+
+.DS_Store
