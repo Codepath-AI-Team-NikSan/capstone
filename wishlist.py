@@ -34,11 +34,11 @@ def get_wishlist(wishlist_str=False):
     """Get the entire wishlist."""
     wishlist = load_wishlist()
     if wishlist_str:
-        response = "\n"
+        response = "📋 Here's your list:\n\n"
         if wishlist:
             count = 1
             for wishlist_entry in wishlist:
-                response += f"\nItem {count}\nName: {wishlist_entry['name']}"
+                response += f"\n**{count}. Name: {wishlist_entry['name']}**\n"
                 response += f"\nPrice: {wishlist_entry['price']}"
                 response += f"\nDescription: {wishlist_entry['description']}"
                 response += f"\nSources: {wishlist_entry['sources']}"

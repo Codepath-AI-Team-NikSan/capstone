@@ -35,7 +35,7 @@ GEN_KWARGS = {"model": MODEL, "temperature": 0.3, "max_tokens": 500}
 client = wrap_openai(openai.AsyncClient(api_key=API_KEY, base_url=ENDPOINT_URL))
 
 WELCOME_MSG = """\
-👋 Hi! I'm here to help you find the best products out there. \
+Hi! 👋 I'm here to help you find the best products out there. \
 Whether you're shopping for tech, home goods, or anything in between, I'm ready to offer recommendations backed by \
 expert research and real-world testing. 🛒✨
 
@@ -161,7 +161,7 @@ async def search_and_process(search_query, llm_prompt, ui_status_message):
     await ui_status_message.update()
 
     search_results = search(search_query=search_query, max_results=15)
-    ui_status_message.content = f"👀 Reviewing each of the {len(search_results)} results closely to make sure only the best recommendations come through..."
+    ui_status_message.content = f"👀 Reviewing {len(search_results)} results closely for the best recommendations..."
     await ui_status_message.update()
 
     # Load search result pages

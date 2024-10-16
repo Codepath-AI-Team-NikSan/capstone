@@ -40,7 +40,13 @@ PURCHASING_LINKS_PROMPT = """\
 Find the appropriate purchasing link for EACH of the products that are recommended in blurb below. \
 Return all of the product purchasing links you've found in a list, where each item in the list is a two-item list that \
 includes the product name and the product link. If you are unable to find any product purchasing links, return an empty list. \
-The output MUST be valid JSON.
+The output MUST be valid JSON. For example:
+
+[
+    ["Product Name 1", "https://www.example.com/product1"],
+    ["Product Name 2", "https://www.example.com/product2"],
+    ["Product Name 3", "https://www.example.com/product3"]
+]
 
 BLURB:
 {recommendation_blurb}
